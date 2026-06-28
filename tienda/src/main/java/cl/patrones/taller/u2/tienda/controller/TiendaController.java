@@ -1,5 +1,7 @@
 package cl.patrones.taller.u2.tienda.controller;
 
+import cl.patrones.taller.u2.catalogo.service.CategoriaService;
+import cl.patrones.taller.u2.tienda.service.TiendaAvisoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,11 +9,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class TiendaController {
-	
+	private TiendaAvisoService tiendaAvisoService;
+	private CategoriaService categoriaService;
+	public TiendaController(
+			TiendaAvisoService tiendaAvisoService,
+			CategoriaService categoriaService
+	) {
+		this.tiendaAvisoService = tiendaAvisoService;
+		this.categoriaService = categoriaService;
+	}
 	@GetMapping("/")
 	public String inicio(Model model) {
-		// TODO: Actividad 2: Avisos
-		//model.addAttribute("avisos", avisos);
+		var avisos = tiendaAvisoService.getAvisos();
+		model.addAttribute("avisos", avisos);
 		return "inicio";
 	}
 		
@@ -21,9 +31,11 @@ public class TiendaController {
 			@PathVariable(name = "slug") String slug,
 			Model model
 	) {
-		// TODO: Actividad 2: Avisos
-		//model.addAttribute("avisos", avisos);
-		//model.addAttribute("categoria", categoria);
+		var avisos = tiendaAvisoService.getAvisosPorCategoriaId(categoriaId);
+		var categoria = categoriaService.getCategoriaPorId(categoriaId).orElse(null);
+
+		model.addAttribute("avisos", avisos);
+		model.addAttribute("categoria", categoria);
 		return "categoria";
 	}
 	
